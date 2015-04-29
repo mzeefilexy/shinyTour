@@ -31,6 +31,7 @@ getTourMembers= function(visible,choice){
   var v = "";
   var i = 0;
   var pos = [];
+  var posGroupParent = [];
   var time = [];
 
 
@@ -83,26 +84,38 @@ getTourMembers= function(visible,choice){
     if( typeof(titles[i])==="undefined" ) {
       titles[i] =0;
     };
+    if( typeof(idsLevel[i])==="undefined" ) {
+      idsLevel[i] = 0;
+    };
+    if( typeof(idsLevel[i])==="undefined" ) {
+      idsLevel[i] = 0;
+    };
+
     if( typeof(idsGroup[i])==="undefined" ) {
       idsGroup[i] = 0;
-    };
-    if( typeof(idsLevel[i])==="undefined" ) {
-      idsLevel[i] = 0;
-    };
-    if( typeof(idsLevel[i])==="undefined" ) {
-      idsLevel[i] = 0;
-    };
-    if( typeof(idsParentGroup[i])==="undefined" ) {
       idsParentGroup[i] = 0;
-    };
+      posGroupParent.push(0);
+    }else{ 
+      if( typeof(idsParentGroup[i])==="undefined" ) {
+        idsParentGroup[i] = 0;
+        posGroupParent.push(0);
+      }else{
+        posGroupParent.push(pos[idsGroup.indexOf(idsParentGroup[i])]);
+      }
+    }
+
+    if( typeof(posGroupParent[i])==="undefined"){
+      posGroupParent[i]=0;
+    }
+
+//console.log(i+")"+"group:"+idsGroup[i]+"; posGroupParent:"+posGroupParent[i]+";idsParentGroup: "+idsParentGroup[i])
+
   }
   if(visible==false){
-    tourMembers = {type:types,id:ids,selector:selectors,title:titles,group:idsGroup,level:idsLevel,parentGroup:idsParentGroup,position:pos,time:time}
-
+    tourMembers = {type:types,id:ids,selector:selectors,title:titles,group:idsGroup,level:idsLevel,groupParent:idsParentGroup,groupParentPos:posGroupParent,position:pos,time:time}
     Shiny.onInputChange("tour_members_list", tourMembers);
   }else{
-    tourMembers = {type:types,id:ids,selector:selectors,title:titles,group:idsGroup,level:idsLevel,parentGroup:idsParentGroup,position:pos,time:time}
-
+    tourMembers = {type:types,id:ids,selector:selectors,title:titles,group:idsGroup,level:idsLevel,groupParent:idsParentGroup,groupParentPos:posGroupParent,position:pos,time:time}
     Shiny.onInputChange("tour_members_list_visible", tourMembers);
 
   }

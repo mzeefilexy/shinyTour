@@ -41,15 +41,6 @@ tourConfig<-R6Class("tourConfig",
     # replace member table, return first selector
     setTable = function(table){
       if(isTRUE(nrow(table)>0)){
-        browser()
-
-        for(i in table$parentGroup){
-          print(table[table$group==i,'position'][1])
-        }
-
-
-        table$positionParent
-        table<-table[with(table,order(type,position)),]
         self$memberTable = table
         self$memberPos=1
         res<-list(
@@ -184,10 +175,10 @@ tourMembersManager<-function(input=NULL,session=shiny::getDefaultReactiveDomain(
     #output$tour_edit_knited<-renderUI(res)
   },label="Update knit preview")
 
-# TODO: simplify these redundant observer and/or put them in R6 object ?
+  # TODO: simplify these redundant observer and/or put them in R6 object ?
   observeEvent(input$tour_members_list_visible,{
     tbl <- tourTable(input$tour_members_list_visible)
-    tbl <- tbl[with(tbl,order(type,position)),]
+    #tbl <- tbl[with(tbl,order(type,groupParentPos,position)),]
     #tbl$position <- 1:length(tbl)
     sel <- config$setTable(tbl)
     res<-tourDbDocTob64(
@@ -217,7 +208,7 @@ tourMembersManager<-function(input=NULL,session=shiny::getDefaultReactiveDomain(
     tourUpdateHtml(session,id='tour_step_html',b64=res)
     tourHighlightMember(session,sel$selector,TRUE)
     updateSelectInput(session,config$idSelectGroup,selected=sel$group)
-    updateSelectInput(session,config$idSelectSelector,choices=sel$selector)
+    updateSelectInput(session,config$idSelectSelector,selected=sel$selector)
 
   })
 
@@ -234,7 +225,7 @@ tourMembersManager<-function(input=NULL,session=shiny::getDefaultReactiveDomain(
     tourUpdateHtml(session,id='tour_step_html',b64=res)
     tourHighlightMember(session,sel$selector,TRUE)
     updateSelectInput(session,config$idSelectGroup,selected=sel$group)
-    updateSelectInput(session,config$idSelectSelector,choices=sel$selector)   
+    updateSelectInput(session,config$idSelectSelector,selected=sel$selector)   
   })
 
 
@@ -247,7 +238,7 @@ tourMembersManager<-function(input=NULL,session=shiny::getDefaultReactiveDomain(
 #' 
 #' tourCheckMembers check html for tourGroup and input label
 #' 
-#' @param session The session object passed to function given to shinyServer
+#' @param session The session object passed to function in shinyServer
 #' @param visible Select only visible elements.
 #' 
 #' @return input$tour_members_list values
@@ -265,7 +256,7 @@ tourCheckMembers<-function(session,visible=FALSE){
 #' 
 #' Toggle red box around member selected
 #'
-#'@param session The session object passed to function given to shinyServer
+#'@param session The session object passed to function in shinyServer
 #'@param memberSelector Member to highlight
 #'
 #'
@@ -292,12 +283,20 @@ tourHighlightMember<-function(session,memberSelector,enabled){
 #' @export
 tourTable<-function(tourMembers){ 
   members<-tourMembers
+  
   if(!is.null(members) && length(members)>0 && is.list(members)){
     membersL<-length(members)
     membersHeader<-names(members)
-    membersTable<-data.frame(matrix(unlist(members),ncol=membersL)) 
-    names(membersTable)<-membersHeader
-    membersTable
+    table<-data.frame(matrix(unlist(members),ncol=membersL)) 
+    #TODO:check why table contain number in factors instead of integer
+    names(table)<-membersHeader
+    table$groupParentPos<-as.integer(as.character(table$groupParentPos))
+    table$position<-as.integer(as.character(table$position))
+    table<-table[!table$group==0,] # items not in any group : discard
+    # table order logic : present all group (type) first, then for each element, 
+    # by position of parent group  
+    table<-table[with(table,order(type,groupParentPos,position)),]
+    table
   }
 }
 
@@ -310,8 +309,9 @@ tourTable<-function(tourMembers){
 #' @param dbTableName name of table in sqlite db
 #'
 #' @export
-tourMembersToDb<-function(dbCon,membersTable,dbTableName='tourMembers'){
+tourMembersToDb<-function(dbPath,membersTable,dbTableName='tourMembers'){
   require(RSQLite)  
+  dbCon=dbConnect(SQLite(),dbPath)
   if(isTRUE(class(dbCon) == "SQLiteConnection")){
     if(isTRUE(!is.null(membersTable)) && isTRUE(nrow(membersTable)>0)){
       membersTable$doc=""
@@ -327,27 +327,35 @@ tourMembersToDb<-function(dbCon,membersTable,dbTableName='tourMembers'){
         if(nrow(membersTableSubset)>0){
           dbWriteTable(dbCon,dbTableName,membersTableSubset,append=T)
         }
-        # if id is not present in member list, set position to 0  
-        sql<-paste0(
-          "UPDATE ",dbTableName,
-          " SET",
-          " position=0,",
-          " level=0",
-          " WHERE id IN (",idHidden,")"
-          )
-        dbGetQuery(dbCon,sql)
-        # udate position and title for existing members
-        for(n in 1:nrow(membersTable)){
-          nVal = membersTable[n,c('id','position','title','parentGroup','level')]
-          sql<-paste0("UPDATE ",dbTableName,
-            " SET ",
-            "position=",nVal$position,
-            ",title=",shQuote(nVal$title),
-            ",parentGroup=",shQuote(nVal$parentGroup),
-            ",level=",nVal$level," ",
-            "WHERE id='",nVal$id,"';")
+        # if id is not present in member list, set position to 0
+        if(isTRUE(nchar(idHidden)>2)){
+          sql<-paste0(
+            "UPDATE ",dbTableName,
+            " SET",
+            " position=0,",
+            " [group]=0,",
+            " groupParentPos=0,",
+            " level=0",
+            " WHERE id IN (",idHidden,")"
+            )
           dbGetQuery(dbCon,sql)
         }
+
+        # udate position and title for existing members
+        for(n in 1:nrow(membersTable)){
+          nVal = membersTable[n,c('id','position','title','group','groupParent','groupParentPos','level')]
+          sql<-paste0("UPDATE ",dbTableName,
+            " SET ",
+            " position=",nVal$position,
+            ", title=",shQuote(nVal$title),
+            ", [group]=",shQuote(nVal$group),
+            ", groupParent=",shQuote(nVal$groupParent),
+            ", groupParentPos=",shQuote(nVal$groupParentPos),
+            ", level=",shQuote(nVal$level)," ",
+            "WHERE id=",shQuote(nVal$id),";")
+          dbGetQuery(dbCon,sql)
+        }
+
       }else{
         fields <- list(
           type="TEXT",
@@ -356,7 +364,8 @@ tourMembersToDb<-function(dbCon,membersTable,dbTableName='tourMembers'){
           title="TEXT",
           group="TEXT",
           level="INTEGER",
-          parentGroup="TEXT",
+          groupParent="TEXT",
+          groupParentPos="INTEGER",
           position="INTEGER",
           time="date",
           doc="TEXT"
@@ -366,6 +375,7 @@ tourMembersToDb<-function(dbCon,membersTable,dbTableName='tourMembers'){
 
     }
   }
+  dbDisconnect(dbCon)
 }
 
 
@@ -384,8 +394,8 @@ tourMembersToDb<-function(dbCon,membersTable,dbTableName='tourMembers'){
 #' 
 #' @export
 tourInit<-function(session=NULL,members=NULL,dbPath="tour.sqlite",dbTableName="tourMembers",idSelectGroup="tourSelectGroup",disableUpdate=F){
+
   require(RSQLite)
-  dbCon<-dbConnect(SQLite(),dbPath)
   if(!disableUpdate){
     if(is.null(members)){
       # empty member list. Go back when you found something.
@@ -395,10 +405,12 @@ tourInit<-function(session=NULL,members=NULL,dbPath="tour.sqlite",dbTableName="t
       # tour init received members. Convert list to table,
       # send them to db and populate db table if new members id are found. 
       members<-tourTable(members)
-      tourMembersToDb(dbCon,membersTable=members,dbTableName=dbTableName)
+      tourMembersToDb(dbPath,membersTable=members,dbTableName=dbTableName)
     }
   }
-  groups<-dbGetQuery(dbCon,paste0('SELECT DISTINCT `group` FROM ',dbTableName))
+  dbCon<-dbConnect(SQLite(),dbPath)
+  sql<-paste0('SELECT DISTINCT `group` FROM ',dbTableName,' ORDER BY groupParentPos, position')
+  groups<-dbGetQuery(dbCon,sql)
   updateSelectInput(session,idSelectGroup,choices=groups)
   dbDisconnect(dbCon) 
 }
@@ -419,7 +431,7 @@ tourFilterId<-function(session,selectedGroup,dbPath='tour.sqlite',dbTableName="t
   require(RSQLite)
   if(!is.null(selectedGroup) && isTRUE(nchar(selectedGroup)>0)){
     dbCon<-dbConnect(SQLite(),dbPath)
-    val<-dbGetQuery(dbCon,paste0("SELECT position,selector,level,type FROM ",dbTableName," WHERE [group]='",selectedGroup,"'"))
+    val<-dbGetQuery(dbCon,paste0("SELECT position,selector,level,type FROM ",dbTableName," WHERE [group]='",selectedGroup,"' ORDER BY type,position"))
     valSelect=val$selector
     names(valSelect)=as.list(apply(val,1,function(x){paste0(x['type']," '",x['selector'],"' (",x['level'],")")}))
     updateSelectInput(session,idSelectSelector,choices=valSelect)
@@ -504,13 +516,13 @@ tourPreviewRender64<-function(txt,disableKnit=T){
 #'
 #'@export
 tourDbDocTob64<-function(dbPath,dbTableName,disableKnit,selector=NULL){
-     dbCon <- dbConnect(SQLite(),dbPath)
-    sql <- paste0("SELECT doc FROM ",dbTableName," WHERE selector='",selector,"'")
-    text <- dbGetQuery(dbCon,sql)$doc
-    text <- rawToChar(base64decode(text))
-    res <- tourPreviewRender64(txt=text,disableKnit)
+  dbCon <- dbConnect(SQLite(),dbPath)
+  sql <- paste0("SELECT doc FROM ",dbTableName," WHERE selector='",selector,"'")
+  text <- dbGetQuery(dbCon,sql)$doc
+  text <- rawToChar(base64decode(text))
+  res <- tourPreviewRender64(txt=text,disableKnit)
 
-  }
+}
 
 
 

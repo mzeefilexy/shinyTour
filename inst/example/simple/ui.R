@@ -42,7 +42,9 @@ shinyUI(
             )
           ),
         mainPanel(
-          plotOutput('sample'),
+          tourGroup("demo_plot_output","Demo of plot inside group",
+          plotOutput('sample')
+          ),
           textOutput('tour_step_knited')
           )
         )

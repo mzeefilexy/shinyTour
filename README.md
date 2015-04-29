@@ -35,7 +35,7 @@ tourGroup(id="demo_main",title="Main page",...)
 
 ```{r}
 library(shinyTour)
-server <- function(input, output) {
+server <- function(input, output,session) {
 # tour settings
 tConf<-tourConfig$new("~/Desktop/tour.sqlite")
 # tour manage all action.
@@ -52,6 +52,8 @@ ui <- fluidPage(
     sidebarLayout(
       tourGroup(id="demo_side_bar",title="Your side bar",
         sidebarPanel(
+        tourBtnTogglePanel('Start tour'),
+        checkboxInput('tour_panel_edit_mode','Edit mode'),
           sliderInput("obs", "Number of observations:", min = 10, max = 500, value = 100)
           )
         ),

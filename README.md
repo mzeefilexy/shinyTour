@@ -1,7 +1,10 @@
 # shinyTour
 
-Create guided tour of inputs and groups.
-This is an experimental implementation, you can expect a lot of changes.
+Create guided tour of inputs and groups of a Shiny app. 
+
+Inside a defined group in `ui.r`, every input label will be registered in a database. These entries could be described in edition mode. You can write knitr chunk in edit mode, so, there is no limit on what can be displayed in the draggable help boxes.
+
+*This is an experimental implementation, you can expect a lot of changes.*
 
 # Installation
 ```{r}
@@ -12,9 +15,10 @@ install_github('fxi/shinyTour')
 # Usage in a Shiny app
 
 ### Init tour  (server.r)
+In the server part, the only thing to do is 
 ```{r}
 library(shinyTour)
-# tour settings
+# tour settings the unique parameter to set is the path to write the sqlite file (self contained database).
 tConf<-tourConfig$new("~/Desktop/tour.sqlite")
 # tour manage all action.
 tourMembersManager(input,session,tConf)
@@ -36,12 +40,12 @@ tourGroup(id="demo_main",title="Main page",...)
 ## Edit mode
 In edit mode, you can change the text of the group or input to describe. 
 You can write knitr chunck and it will be rendered in display mode. 
-So, it could be a good idea to hide the edit button if your application is published.
+So, it could be a good idea to hide the edit checkbox if your application is published.
 ![shinyTour edit mode](https://raw.githubusercontent.com/fxi/shinyTour/master/inst/example/img/shinyTourEdit.png)
 
 
 ## Display mode
-In display mode, let your users discore visible elements from your applications.
+In display mode, let your users learn about visible elements from your applications.
 ![shinyTour display mode](https://raw.githubusercontent.com/fxi/shinyTour/master/inst/example/img/shinyTourDisplay.png)
 
 

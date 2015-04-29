@@ -1,0 +1,58 @@
+
+
+
+.tour_member_active {
+  z-index: 80;
+  padding:5px;
+  border:gray;
+  background: white;
+  border-radius: 5px;
+  position: relative;
+  -webkit-box-shadow: inset 1px 1px 3px 0px rgba(92,92,92,1);
+  -moz-box-shadow: inset 1px 1px 3px 0px rgba(92,92,92,1);
+  box-shadow: inset 1px 1px 3px 0px rgba(92,92,92,1);
+
+
+}
+
+.tour_panel_head_btn {
+float:right
+}
+
+.tour_overlay {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index:70;
+  position:fixed;
+  background:black;
+  opacity:0.4;
+}
+
+
+#tour_panel {
+  width:550px;
+  border-radius: 5px;
+  z-index:110; */ 
+  position:absolute;
+  left: 50%;
+  -webkit-box-shadow: 1px 1px 70px 0px rgba(92,92,92,1);
+  -moz-box-shadow: 1px 1px 70px 0px rgba(92,92,92,1);
+  box-shadow: 1px 1px 70px 0px rgba(92,92,92,1);
+}
+
+
+.tour_knited {
+height:400px;
+overflow-y:scroll;
+}
+
+
+
+
+
+
+
+
+

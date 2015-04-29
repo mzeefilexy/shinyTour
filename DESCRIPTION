@@ -1,0 +1,12 @@
+Package: shinyTour
+Version: 0.1
+Date: 2015-04-15
+Title: ShinyTour helper function
+Author: c(person("Fred", "Moser", role = c("aut", "cre"),
+      email = "f@fxi.io"),
+Maintainer: Fred Moser <f@fxi.io>
+Depends: R (>= 3.1.0), RSQLite, shiny, shinyAce, R6, base64enc, markdown
+Description: A package to facilitate shiny app documentation
+License: GPL (>= 2)
+  URL: https://github.com/fxi  
+  BugReports: http://github.com/fxi

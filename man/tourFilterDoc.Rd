@@ -5,7 +5,7 @@
 \title{tourFilterDoc}
 \usage{
 tourFilterDoc(session, selectedId, dbPath = "tour.sqlite",
-  tableName = "tourItems", editorId = "tour_ace_editor")
+  dbTableName = "tourMembers", editorId = "tour_ace_editor")
 }
 \arguments{
 \item{session}{current shiny session}
@@ -14,11 +14,11 @@ tourFilterDoc(session, selectedId, dbPath = "tour.sqlite",
 
 \item{dbPath}{path to sqlite db}
 
-\item{tableName}{name of table containing items data}
+\item{dbTableName}{name of table containing members data}
 
 \item{editorID}{outputID of the editor as defined in tourEditor()}
 }
 \description{
-Given an item id, update editor with "doc" field value
+Given an member id, update editor with "doc" field value
 }
 

@@ -5,16 +5,16 @@
 \title{tourUpdateDoc}
 \usage{
 tourUpdateDoc(selectedId, text, dbPath = "tour.sqlite",
-  tableName = "tourItems")
+  dbTableName = "tourMembers")
 }
 \arguments{
-\item{selectedId}{item id selected}
+\item{selectedId}{member id selected}
 
 \item{text}{text value from editor}
 
 \item{dbPath}{path to sqliteDb}
 
-\item{tableName}{name of table containing items data}
+\item{dbTableName}{name of table containing members data}
 }
 \description{
 As soon as the doc in editor is modified, update SQLite table

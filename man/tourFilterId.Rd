@@ -5,7 +5,7 @@
 \title{tourFilterId}
 \usage{
 tourFilterId(session, selectedGroup, dbPath = "tour.sqlite",
-  tableName = "tourItems", idSelectId = "tourSelectId")
+  dbTableName = "tourMembers", idSelectSelector = "tourSelectId")
 }
 \arguments{
 \item{session}{current shiny session}
@@ -14,11 +14,11 @@ tourFilterId(session, selectedGroup, dbPath = "tour.sqlite",
 
 \item{dbPath}{path to sqlite db}
 
-\item{tableName}{table containing items data}
+\item{dbTableName}{table containing members data}
 
-\item{idSelectId}{id of id select input as defined in tourEditor()}
+\item{idSelectSelector}{id of selector's select input. in tourEditor()}
 }
 \description{
-Given a group of items, update id selectInput
+Given a group of members, update id selectInput
 }
 

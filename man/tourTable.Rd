@@ -4,15 +4,15 @@
 \alias{tourTable}
 \title{tourTable}
 \usage{
-tourTable(tourItems)
+tourTable(tourMembers)
 }
 \arguments{
-\item{tourItems}{input$tourItems}
+\item{tourMembers}{input$tour_members_list}
 }
 \value{
 table of tour groups and input
 }
 \description{
-list of items found (input$touritems) to data.frame.
+list of members found (input$tourMembers) to data.frame.
 }
 

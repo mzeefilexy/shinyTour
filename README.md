@@ -35,30 +35,31 @@ tourGroup(id="demo_main",title="Main page",...)
 
 ```{r}
 library(shinyTour)
-server <- function(input, output,session) {
+  server <- function(input, output,session) {
 # tour settings
-tConf<-tourConfig$new("~/Desktop/tour.sqlite")
+    tConf<-tourConfig$new("~/Desktop/tour.sqlite")
 # tour manage all action.
-tourMembersManager(input,session,tConf)
+      tourMembersManager(input,session,tConf)
 
-  output$distPlot <- renderPlot({
-      hist(rnorm(input$obs), col = 'darkgray', border = 'white')
-      })
-}
+      output$distPlot <- renderPlot({
+          hist(rnorm(input$obs), col = 'darkgray', border = 'white')
+          })
+  }
 
 ui <- fluidPage(
     tourPanel(title="shinyTour"),
     div(class="tour_overlay",style="display: none;"),
-    sidebarLayout(
-      tourGroup(id="demo_side_bar",title="Your side bar",
-        sidebarPanel(
-        tourBtnTogglePanel('Start tour'),
-        checkboxInput('tour_panel_edit_mode','Edit mode'),
-          sliderInput("obs", "Number of observations:", min = 10, max = 500, value = 100)
-          )
-        ),
-      mainPanel(plotOutput("distPlot"))
-      )
+    tourGroup(id="demo_app","Your application",
+      sidebarLayout(
+        tourGroup(id="demo_side_bar",title="Your side bar",
+          sidebarPanel(
+            tourBtnTogglePanel('Start tour'),
+            checkboxInput('tour_panel_edit_mode','Edit mode'),
+            sliderInput("obs", "Number of observations:", min = 10, max = 500, value = 100)
+            )
+          ),
+        mainPanel(plotOutput("distPlot"))
+        ))
     )
 
 shinyApp(ui = ui, server = server)

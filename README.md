@@ -1,6 +1,6 @@
 # shinyTour
 
-Create guided tour of inputs and groups of a Shiny app. 
+Create a guided tour of inputs and groups of a Shiny app. 
 
 Inside a defined group in `ui.r`, every input label will be registered in a database. These entries could be described in edition mode. You can write knitr chunk in edit mode, so, there is no limit on what can be displayed in the draggable help boxes.
 
@@ -15,12 +15,12 @@ install_github('fxi/shinyTour')
 # Usage in a Shiny app
 
 ### Init tour  (server.r)
-In the server part, the only thing to do is 
+In the server part, the only thing to do is to set a path to a sqlite db (automatically created) 
 ```{r}
 library(shinyTour)
-# tour settings the unique parameter to set is the path to write the sqlite file (self contained database).
+# tour settings.
 tConf<-tourConfig$new("~/Desktop/tour.sqlite")
-# tour manage all action.
+# tour manager..
 tourMembersManager(input,session,tConf)
   ```
 

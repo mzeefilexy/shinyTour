@@ -408,7 +408,7 @@ tourInit<-function(session=NULL,members=NULL,dbPath="tour.sqlite",dbTableName="t
     }
   }
   dbCon<-dbConnect(SQLite(),dbPath)
-  sql<-paste0('SELECT DISTINCT `group` FROM ',dbTableName,' ORDER BY groupParentPos, position')
+  sql<-paste0('SELECT DISTINCT [group] FROM ',dbTableName,' ORDER BY groupParentPos, position')
   groups<-dbGetQuery(dbCon,sql)
   updateSelectInput(session,idSelectGroup,choices=groups)
   dbDisconnect(dbCon) 

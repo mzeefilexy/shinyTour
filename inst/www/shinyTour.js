@@ -61,7 +61,7 @@ getTourMembers= function(visible,choice){
     pos.push(i);
     time.push(Date.now());
     types.push('item');
-    id=$(this).attr('for');
+    id=$(this).attr('for')[0];
     selector = "tour_" + id;
     $(this).parent('.form-group').attr('tour_id', selector); /*set new ID for form-group */
     ids.push(id); /* destination id */

@@ -266,7 +266,7 @@ tourHighlightMember<-function(session,memberSelector,enabled){
     if(isTRUE(!is.null(memberSelector)) && isTRUE(length(memberSelector)>0)){
       js<-"$('.tour_member_active').removeClass('tour_member_active')"
       #if(enable){
-      js<-paste0(js,";$('#",memberSelector,"').toggleClass('tour_member_active');")
+      js<-paste0(js,";$(\"[tour_id='",memberSelector,"']\").toggleClass('tour_member_active');")
       #}
       session$sendCustomMessage(type="tourJs",list(code=js)) 
     }

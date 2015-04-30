@@ -178,6 +178,7 @@ tourMembersManager<-function(input=NULL,session=shiny::getDefaultReactiveDomain(
   # TODO: simplify these redundant observer and/or put them in R6 object ?
   observeEvent(input$tour_members_list_visible,{
     tbl <- tourTable(input$tour_members_list_visible)
+    if(isTRUE(nrow(tbl)>0)){
     #tbl <- tbl[with(tbl,order(type,groupParentPos,position)),]
     #tbl$position <- 1:length(tbl)
     sel <- config$setTable(tbl)
@@ -190,8 +191,8 @@ tourMembersManager<-function(input=NULL,session=shiny::getDefaultReactiveDomain(
     tourUpdateHtml(session,id='tour_step_html',b64=res)
     tourHighlightMember(session,sel$selector,TRUE)
     updateSelectInput(session,config$idSelectGroup,selected=sel$group)
-    updateSelectInput(session,config$idSelectSelector,choices=sel$selector)
-
+    updateSelectInput(session,config$idSelectSelector,selected=sel$selector)
+      }
   },label="Observer: set first step")
 
   #
@@ -409,7 +410,7 @@ tourInit<-function(session=NULL,members=NULL,dbPath="tour.sqlite",dbTableName="t
   }
   dbCon<-dbConnect(SQLite(),dbPath)
   sql<-paste0('SELECT DISTINCT [group] FROM ',dbTableName,' ORDER BY groupParentPos, position')
-  groups<-dbGetQuery(dbCon,sql)
+  groups<-dbGetQuery(dbCon,sql)$group
   updateSelectInput(session,idSelectGroup,choices=groups)
   dbDisconnect(dbCon) 
 }

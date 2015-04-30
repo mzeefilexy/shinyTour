@@ -34,7 +34,7 @@ tourGroup<-function(idGroup,title,...){
         tags$script(type="text/javascript",src="shinyTour/draggable/draggable.js"),
         tags$link(rel="stylesheet",href='shinyTour/shinyTour.css'))
       ),        
-    div(class='tour_group',tour_title=title,id=idGroup,...)
+    div(class='tour_group',tour_title=title,tour_id=idGroup,...)
     )
 }
 

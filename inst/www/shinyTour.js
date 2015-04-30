@@ -42,7 +42,7 @@ getTourMembers= function(visible,choice){
       i=i+1;
       pos.push(i);
       time.push(Date.now());
-      id=$(this).attr('id');
+      id=$(this).attr('tour_id');
       selector=id;
       types.push('group');
       titles.push($(this).attr('tour_title')),
@@ -63,13 +63,13 @@ getTourMembers= function(visible,choice){
     types.push('item');
     id=$(this).attr('for');
     selector = "tour_" + id;
-    $(this).parent('.form-group').attr('id', selector); /*set new ID for form-group */
+    $(this).parent('.form-group').attr('tour_id', selector); /*set new ID for form-group */
     ids.push(id); /* destination id */
     selectors.push(selector); /* new id for tour ref */
     titles.push($(this).text()); /* text of label as title*/
-    idsGroup.push( $(this).closest('.tour_group').attr('id')); /* parent tour group*/
+    idsGroup.push( $(this).closest('.tour_group').attr('tour_id')); /* parent tour group*/
     idsLevel.push( $(this).parents('.tour_group').parents('.tour_group').length +1); /* recursion level  */
-    idsParentGroup.push( $(this).parents('.tour_group').parents('.tour_group').attr('id')); /* container group */
+    idsParentGroup.push( $(this).parents('.tour_group').parents('.tour_group').attr('tour_id')); /* container group */
   }
   );
 

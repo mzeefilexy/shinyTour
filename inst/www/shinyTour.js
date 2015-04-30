@@ -79,7 +79,7 @@ getTourMembers= function(visible,choice){
   /* remove undefined*/ 
   for( var i = 0; i < ids.length; i++ ) {
     if( typeof(ids[i])==="undefined" ) {
-      ids[i] = NA;
+      ids[i] = 0;
     };
     if( typeof(titles[i])==="undefined" ) {
       titles[i] =0;

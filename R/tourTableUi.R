@@ -95,9 +95,9 @@ tourPanel<-function(title="Tour step content edit",idEditor="tour_ace_editor",id
           tabsetPanel(type='pills',
             tabPanel("Edit",
               hr(),
-              aceEditor(outputId = idEditor, "", mode="markdown",theme="github"),
-              tags$script("editor.setOption('wrap',true)"),
-              tags$script("editor.setKeyboardHandler('ace/keyboard/vim');")
+              aceEditor(outputId = idEditor, "", mode="markdown",theme="github")
+              #tags$script("editor.setOption('wrap',true)"),
+              #tags$script("editor.setKeyboardHandler('ace/keyboard/vim');")
               ),
             tabPanel("Render",  
               hr(),
